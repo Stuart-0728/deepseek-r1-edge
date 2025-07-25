@@ -15,7 +15,7 @@ export const WelcomeMessage = ({
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.08,
+        staggerChildren: 0.05,
         delayChildren: 0.1
       }
     }
@@ -31,48 +31,73 @@ export const WelcomeMessage = ({
       initial="hidden"
       animate="show"
       variants={container}
-      className="max-w-3xl mx-auto px-4 py-8 md:py-12"
+      className="max-w-3xl mx-auto px-4 text-center"
     >
-      <motion.div variants={item} className="text-center mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-          智能对话助手
-        </h1>
-        
-        <p className="text-base text-gray-600 dark:text-gray-300">
-          基于 DeepSeek R1 的智能对话系统，支持多种模型和联网能力
-        </p>
-      </motion.div>
+      <motion.h1 
+        variants={item}
+        className="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100"
+      >
+        我们先从哪里开始呢?
+      </motion.h1>
       
-      <motion.div variants={item} className="mb-6">
-        <h2 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-          您可以这样提问
-        </h2>
+      <motion.div 
+        variants={item}
+        className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8"
+      >
+        <div 
+          onClick={() => {}}
+          className="p-4 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer text-left"
+        >
+          <h3 className="font-medium text-base mb-2 text-gray-800 dark:text-gray-100">
+            帮我写一段代码
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            用Python实现一个猜数字游戏，包含基本的输入验证和提示
+          </p>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-            <div className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">💡 知识问答</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">解释量子计算的基本原理和应用场景</div>
-          </div>
-          
-          <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-            <div className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">📝 写作辅助</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">撰写一篇关于环保的倡议书，字数约500字</div>
-          </div>
-          
-          <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-            <div className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">💻 代码帮助</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">用Python实现一个简单的Web爬虫，并解释关键代码</div>
-          </div>
-          
-          <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-            <div className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">🔍 资料整理</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">总结人工智能在医疗领域的主要应用和未来趋势</div>
-          </div>
+        <div 
+          onClick={() => {}}
+          className="p-4 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer text-left"
+        >
+          <h3 className="font-medium text-base mb-2 text-gray-800 dark:text-gray-100">
+            解释一个复杂概念
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            用简单的语言解释量子计算，就像我是一个10岁的孩子
+          </p>
+        </div>
+        
+        <div 
+          onClick={() => {}}
+          className="p-4 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer text-left"
+        >
+          <h3 className="font-medium text-base mb-2 text-gray-800 dark:text-gray-100">
+            创建一个学习计划
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            为初学者制定一个30天的机器学习入门学习计划
+          </p>
+        </div>
+        
+        <div 
+          onClick={() => {}}
+          className="p-4 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer text-left"
+        >
+          <h3 className="font-medium text-base mb-2 text-gray-800 dark:text-gray-100">
+            帮我写文章
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            写一篇关于人工智能对未来工作影响的800字文章
+          </p>
         </div>
       </motion.div>
       
-      <motion.div variants={item} className="text-center text-xs text-gray-500 dark:text-gray-400">
-        请从下方输入框开始您的提问，或点击示例问题快速开始
+      <motion.div 
+        variants={item}
+        className="text-sm text-gray-500 dark:text-gray-400"
+      >
+        ChatGPT 也可能会犯错。考虑验证重要信息。
       </motion.div>
     </motion.div>
   );

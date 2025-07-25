@@ -94,7 +94,7 @@ export default function Home() {
         '帮助优化快速排序算法的Python代码并分析时间复杂度',
       'Create a comparison table of marketing strategies between TikTok and Instagram Reels':
         '创建抖音和Instagram Reels营销策略的对比表',
-      'Type a message...': '请输入您的问题...',
+      'Type a message...': '询问任何问题...',
       'Network: On': '联网: 开启',
       'Network: Off': '联网: 关闭',
       'References': '参考资料',
@@ -424,214 +424,185 @@ export default function Home() {
 
   return (
     isClient && (
-      <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
-        {/* 侧边栏 */}
-        <div className="flex h-full">
-          {/* 主内容区 */}
-          <div className="flex-1 flex flex-col h-full max-w-full">
-            {/* 顶部导航栏 */}
-            <header className="sticky top-0 z-40 flex items-center justify-between h-14 px-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-              <div className="flex items-center space-x-2">
-                <a 
-                  href="https://cqaibase.cn" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center"
-                >
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center shadow-sm">
-                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9 12H15M12 9V15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
-                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <span className="ml-2 text-lg font-medium">智能对话助手</span>
-                </a>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setIsDarkMode(!isDarkMode)}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  aria-label={isDarkMode ? "切换到亮色模式" : "切换到暗色模式"}
-                >
-                  {isDarkMode ? (
-                    <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
-                  )}
-                </button>
-                
-                <a 
-                  href="https://cqaibase.cn" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="flex items-center px-3 py-1.5 text-sm font-medium rounded-md bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                  首页
-                </a>
-              </div>
-            </header>
+      <div className="flex flex-col h-screen bg-white dark:bg-gray-800">
+        {/* 顶部导航栏 */}
+        <header className="sticky top-0 z-40 flex items-center justify-between h-14 px-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="flex items-center">
+            <div className="flex items-center">
+              <h1 className="text-lg font-medium flex items-center">
+                <span className="mr-2">智能对话助手</span>
+                <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
+                  <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </h1>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label={isDarkMode ? "切换到亮色模式" : "切换到暗色模式"}
+            >
+              {isDarkMode ? (
+                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
+            
+            <a 
+              href="https://cqaibase.cn" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              首页
+            </a>
+          </div>
+        </header>
 
-            {/* 主聊天区域 */}
-            <main className="flex-1 overflow-hidden relative">
-              {/* 欢迎信息 */}
-              <WelcomeMessage show={showKeywords && messages.length === 0} t={t} />
-              
-              {/* 消息列表 */}
-              <div className="h-[calc(100vh-13rem)] overflow-hidden">
-                <div 
-                  ref={messageRef} 
-                  className="h-full overflow-y-auto px-4 py-4 scrollbar-thin"
-                >
-                  <MessageList messages={messages} isSearching={isSearching} t={t} />
-                </div>
-              </div>
-              
-              {/* 滚动到底部按钮 */}
-              <div className="absolute bottom-4 right-4">
-                <ScrollToBottomButton 
-                  isVisible={showScrollButton} 
-                  onClick={scrollToBottom} 
+        {/* 主聊天区域 */}
+        <main className="flex-1 overflow-hidden relative">
+          {/* 欢迎信息 */}
+          {showKeywords && messages.length === 0 && (
+            <div className="h-full flex flex-col items-center justify-center">
+              <WelcomeMessage show={true} t={t} />
+            </div>
+          )}
+          
+          {/* 消息列表 */}
+          <div className={`h-full overflow-hidden ${showKeywords && messages.length === 0 ? 'hidden' : 'block'}`}>
+            <div 
+              ref={messageRef} 
+              className="h-full overflow-y-auto px-4 py-4 scrollbar-thin"
+            >
+              <MessageList messages={messages} isSearching={isSearching} t={t} />
+            </div>
+          </div>
+          
+          {/* 滚动到底部按钮 */}
+          <div className="absolute bottom-4 right-4">
+            <ScrollToBottomButton 
+              isVisible={showScrollButton} 
+              onClick={scrollToBottom} 
+            />
+          </div>
+        </main>
+
+        {/* 输入区域 */}
+        <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+          <div className="max-w-3xl mx-auto">
+            <form onSubmit={handleSubmit} className="relative">
+              <div className="relative flex items-end rounded-lg border border-gray-300 dark:border-gray-600 focus-within:ring-1 focus-within:ring-blue-500 dark:focus-within:ring-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-500">
+                <textarea
+                  ref={textareaRef}
+                  value={userInput}
+                  onChange={handleTextareaChange}
+                  placeholder={t('Type a message...')}
+                  disabled={isLoading}
+                  className="w-full bg-transparent text-gray-800 dark:text-gray-100 px-4 py-3 max-h-[200px] min-h-[56px] focus:outline-none resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                  onCompositionStart={(e) => {
+                    (e.target as HTMLTextAreaElement).dataset.composing = 'true';
+                  }}
+                  onCompositionEnd={(e) => {
+                    (e.target as HTMLTextAreaElement).dataset.composing = 'false';
+                  }}
+                  onKeyDown={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    const isComposing = target.dataset.composing === 'true';
+                    if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
                 />
-              </div>
-            </main>
-
-            {/* 示例问题区域 */}
-            {showKeywords && messages.length === 0 && (
-              <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-800">
-                <div className="max-w-3xl mx-auto">
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">示例问题</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {getDisplayButtons().map((button, index) => (
-                      <motion.button
-                        key={button.text}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                        onClick={() => handleKeywordClick(button.query)}
-                        className="text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
+                <div className="flex items-center pr-2">
+                  <button
+                    type={isStreaming ? 'button' : 'submit'}
+                    onClick={isStreaming ? handleStopResponse : undefined}
+                    disabled={
+                      (isLoading && !isStreaming) ||
+                      (!userInput.trim() && !isStreaming)
+                    }
+                    className={`p-2 rounded-md transition-colors ${
+                      (isLoading && !isStreaming) ||
+                      (!userInput.trim() && !isStreaming)
+                        ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                        : isStreaming
+                        ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
+                        : 'text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    {isStreaming ? (
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        {button.text}
-                      </motion.button>
-                    ))}
-                  </div>
+                        <path d="M6 6h12v12H6z" />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
               </div>
-            )}
-
-            {/* 输入区域 */}
-            <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-4">
-              <div className="max-w-3xl mx-auto">
-                <form onSubmit={handleSubmit} className="relative">
-                  <div className="relative flex items-end bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-500">
-                    <textarea
-                      ref={textareaRef}
-                      value={userInput}
-                      onChange={handleTextareaChange}
-                      placeholder={t('Type a message...')}
+              
+              <div className="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400 px-1">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center">
+                    <span className="mr-2">模型:</span>
+                    <select
+                      value={selectedModel}
+                      onChange={(e) => setSelectedModel(e.target.value)}
+                      className="bg-transparent border-none focus:outline-none appearance-none cursor-pointer pr-6 relative"
                       disabled={isLoading}
-                      className="w-full bg-transparent text-gray-800 dark:text-gray-100 px-4 py-3 max-h-[200px] min-h-[56px] focus:outline-none resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                      onCompositionStart={(e) => {
-                        (e.target as HTMLTextAreaElement).dataset.composing = 'true';
-                      }}
-                      onCompositionEnd={(e) => {
-                        (e.target as HTMLTextAreaElement).dataset.composing = 'false';
-                      }}
-                      onKeyDown={(e) => {
-                        const target = e.target as HTMLTextAreaElement;
-                        const isComposing = target.dataset.composing === 'true';
-                        if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
-                          e.preventDefault();
-                          handleSubmit(e);
-                        }
-                      }}
-                    />
-                    <button
-                      type={isStreaming ? 'button' : 'submit'}
-                      onClick={isStreaming ? handleStopResponse : undefined}
-                      disabled={
-                        (isLoading && !isStreaming) ||
-                        (!userInput.trim() && !isStreaming)
-                      }
-                      className={`flex-shrink-0 p-2 mr-2 mb-2 rounded-md transition-all duration-200 ${
-                        (isLoading && !isStreaming) ||
-                        (!userInput.trim() && !isStreaming)
-                          ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                          : isStreaming
-                          ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
-                          : 'text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20'
-                      }`}
                     >
-                      {isStreaming ? (
-                        <svg
-                          className="w-5 h-5"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M6 6h12v12H6z" />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="w-5 h-5"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                        </svg>
-                      )}
-                    </button>
+                      {MODEL_OPTIONS.map((model) => (
+                        <option key={model.id} value={model.id} className="bg-white dark:bg-gray-800">
+                          {t(model.name)}
+                        </option>
+                      ))}
+                    </select>
+                    <svg className="w-4 h-4 absolute ml-[120px]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
                   </div>
                   
-                  <div className="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400 px-1">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center">
-                        <span className="mr-2">模型:</span>
-                        <select
-                          value={selectedModel}
-                          onChange={(e) => setSelectedModel(e.target.value)}
-                          className="bg-transparent border-none focus:outline-none appearance-none cursor-pointer pr-6 relative"
-                          disabled={isLoading}
-                        >
-                          {MODEL_OPTIONS.map((model) => (
-                            <option key={model.id} value={model.id} className="bg-white dark:bg-gray-800">
-                              {t(model.name)}
-                            </option>
-                          ))}
-                        </select>
-                        <svg className="w-4 h-4 absolute ml-[120px]" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      
-                      <button
-                        type="button"
-                        onClick={() => setUseNetwork(!useNetwork)}
-                        className="flex items-center hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                      >
-                        <svg
-                          className={`w-4 h-4 mr-1 ${useNetwork ? 'text-blue-500' : ''}`}
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-                        </svg>
-                        {useNetwork ? t('Network: On') : t('Network: Off')}
-                      </button>
-                    </div>
-                    <div>
-                      Shift + Enter 换行
-                    </div>
-                  </div>
-                </form>
+                  <button
+                    type="button"
+                    onClick={() => setUseNetwork(!useNetwork)}
+                    className="flex items-center hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                  >
+                    <svg
+                      className={`w-4 h-4 mr-1 ${useNetwork ? 'text-blue-500' : ''}`}
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                    </svg>
+                    {useNetwork ? t('Network: On') : t('Network: Off')}
+                  </button>
+                </div>
+                <div>
+                  ChatGPT 也可能会犯错
+                </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
