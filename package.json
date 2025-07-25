@@ -16,6 +16,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.23.9",
     "lodash": "^4.17.21",
     "lucide-react": "^0.438.0",
     "mermaid": "^11.7.0",
