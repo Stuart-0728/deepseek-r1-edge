@@ -18,19 +18,19 @@ type MessageListProps = {
 
 export const MessageList = ({ messages, isSearching, t }: MessageListProps) => {
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-5">
       {messages.map((message, index) => (
         <motion.div
           key={index}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: index * 0.1 }}
           className={`flex items-start ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
         >
           {message.role === 'assistant' && (
-            <div className="flex-shrink-0 mr-3">
-              <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
-                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="flex-shrink-0 mr-2.5">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-sm">
+                <svg className="w-4.5 h-4.5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 12H15M12 9V15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -41,16 +41,16 @@ export const MessageList = ({ messages, isSearching, t }: MessageListProps) => {
           <div
             className={`relative max-w-[85%] ${
               message.role === 'user' 
-                ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white' 
+                ? 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white' 
                 : 'bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700'
-            } px-5 py-4 rounded-2xl shadow-sm`}
+            } px-4 py-3 rounded-lg shadow-sm`}
           >
             {message.role === 'user' && (
-              <div className="whitespace-pre-wrap text-sm md:text-base">{message.content}</div>
+              <div className="whitespace-pre-wrap text-sm">{message.content}</div>
             )}
 
             {message.role === 'assistant' && (
-              <div className="prose prose-slate dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-gray-50 dark:prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-gray-700 prose-pre:rounded-lg prose-pre:p-3 prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-blue-50 dark:prose-code:bg-blue-900/30 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-ul:my-4 prose-li:my-0.5 text-sm md:text-base">
+              <div className="prose prose-slate dark:prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-gray-50 dark:prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-gray-700 prose-pre:rounded-md prose-pre:p-3 prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-blue-50 dark:prose-code:bg-blue-900/30 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-ul:my-4 prose-li:my-0.5 text-sm">
                 {message.source && <Source sources={message.source} t={t} />}
                 {message.think && <ThinkDrawer content={message.think} t={t} />}
                 {message.role === 'assistant' && index === messages.length - 1 && isSearching && !message.content && !message.think && <SearchingIndicator isSearching={isSearching} t={t} />}
@@ -72,10 +72,10 @@ export const MessageList = ({ messages, isSearching, t }: MessageListProps) => {
                             customStyle={{
                               background: 'transparent',
                               border: 'none',
-                              padding: '1rem',
+                              padding: '0.875rem',
                               margin: '0.5rem 0',
-                              fontSize: '0.875rem',
-                              borderRadius: '0.5rem',
+                              fontSize: '0.8125rem',
+                              borderRadius: '0.375rem',
                               backgroundColor: 'var(--tw-prose-pre-bg)'
                             }}
                           >
@@ -105,9 +105,9 @@ export const MessageList = ({ messages, isSearching, t }: MessageListProps) => {
           </div>
           
           {message.role === 'user' && (
-            <div className="flex-shrink-0 ml-3">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="flex-shrink-0 ml-2.5">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center shadow-sm">
+                <svg className="w-4.5 h-4.5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" 
                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
