@@ -41,9 +41,9 @@ export const MessageList = ({ messages, isSearching, t }: MessageListProps) => {
           <div
             className={`relative max-w-[85%] ${
               message.role === 'user' 
-                ? 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white' 
-                : 'bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700'
-            } px-4 py-3 rounded-lg shadow-sm`}
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-100 dark:bg-gray-800'
+            } px-4 py-3 rounded-lg`}
           >
             {message.role === 'user' && (
               <div className="whitespace-pre-wrap text-sm">{message.content}</div>
