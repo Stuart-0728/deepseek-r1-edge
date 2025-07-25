@@ -424,13 +424,13 @@ export default function Home() {
 
   return (
     isClient && (
-      <div className="flex flex-col h-screen bg-white dark:bg-gray-800">
+      <div className="flex flex-col h-screen bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800">
         {/* 顶部导航栏 */}
-        <header className="sticky top-0 z-40 flex items-center justify-between h-14 px-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <header className="sticky top-0 z-40 flex items-center justify-between h-14 px-4 border-b border-gray-200 dark:border-gray-700 backdrop-blur-md bg-white/80 dark:bg-gray-900/80">
           <div className="flex items-center">
             <div className="flex items-center">
               <h1 className="text-lg font-medium flex items-center">
-                <span className="mr-2">智能对话助手</span>
+                <span className="mr-2 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent font-bold">智能对话助手</span>
                 <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
                   <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -459,7 +459,7 @@ export default function Home() {
               href="https://cqaibase.cn" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center px-3 py-1.5 text-sm font-medium rounded-md bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-90 transition-opacity"
             >
               <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -498,10 +498,10 @@ export default function Home() {
         </main>
 
         {/* 输入区域 */}
-        <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+        <div className="py-3 px-4 bg-transparent">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSubmit} className="relative">
-              <div className="relative flex items-end rounded-lg border border-gray-300 dark:border-gray-600 focus-within:ring-1 focus-within:ring-blue-500 dark:focus-within:ring-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-500">
+              <div className="relative flex items-end bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400 focus-within:border-blue-500 dark:focus-within:border-blue-400">
                 <textarea
                   ref={textareaRef}
                   value={userInput}
@@ -524,7 +524,7 @@ export default function Home() {
                     }
                   }}
                 />
-                <div className="flex items-center pr-2">
+                <div className="flex items-center pr-3">
                   <button
                     type={isStreaming ? 'button' : 'submit'}
                     onClick={isStreaming ? handleStopResponse : undefined}
@@ -532,13 +532,13 @@ export default function Home() {
                       (isLoading && !isStreaming) ||
                       (!userInput.trim() && !isStreaming)
                     }
-                    className={`p-2 rounded-md transition-colors ${
+                    className={`p-2 rounded-lg transition-all ${
                       (isLoading && !isStreaming) ||
                       (!userInput.trim() && !isStreaming)
                         ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
                         : isStreaming
                         ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
-                        : 'text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-90'
                     }`}
                   >
                     {isStreaming ? (
@@ -565,41 +565,47 @@ export default function Home() {
               <div className="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400 px-1">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center">
-                    <span className="mr-2">模型:</span>
-                    <select
-                      value={selectedModel}
-                      onChange={(e) => setSelectedModel(e.target.value)}
-                      className="bg-transparent border-none focus:outline-none appearance-none cursor-pointer pr-6 relative"
-                      disabled={isLoading}
-                    >
-                      {MODEL_OPTIONS.map((model) => (
-                        <option key={model.id} value={model.id} className="bg-white dark:bg-gray-800">
-                          {t(model.name)}
-                        </option>
-                      ))}
-                    </select>
-                    <svg className="w-4 h-4 absolute ml-[120px]" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
+                    <div className="flex items-center space-x-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
+                      <span className="font-medium">模型:</span>
+                      <select
+                        value={selectedModel}
+                        onChange={(e) => setSelectedModel(e.target.value)}
+                        className="bg-transparent border-none focus:outline-none appearance-none cursor-pointer pr-6 relative"
+                        disabled={isLoading}
+                      >
+                        {MODEL_OPTIONS.map((model) => (
+                          <option key={model.id} value={model.id} className="bg-white dark:bg-gray-800">
+                            {t(model.name)}
+                          </option>
+                        ))}
+                      </select>
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </div>
                   </div>
                   
                   <button
                     type="button"
                     onClick={() => setUseNetwork(!useNetwork)}
-                    className="flex items-center hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                    className={`flex items-center px-3 py-1.5 rounded-full border transition-colors ${
+                      useNetwork 
+                        ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+                    }`}
                   >
                     <svg
-                      className={`w-4 h-4 mr-1 ${useNetwork ? 'text-blue-500' : ''}`}
+                      className={`w-4 h-4 mr-1.5 ${useNetwork ? 'text-blue-500' : ''}`}
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
                     </svg>
-                    {useNetwork ? t('Network: On') : t('Network: Off')}
+                    {useNetwork ? '联网模式' : '离线模式'}
                   </button>
                 </div>
-                <div>
-                  ChatGPT 也可能会犯错
+                <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
+                  Shift + Enter 换行
                 </div>
               </div>
             </form>
