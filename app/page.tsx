@@ -1,6 +1,7 @@
 'use client';
 
-import React, {
+import * as React from 'react';
+import {
   useState,
   useRef,
   useLayoutEffect,
@@ -12,6 +13,7 @@ import remarkGfm from 'remark-gfm';
 import debounce from 'lodash/debounce';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { ScrollToBottomButton } from '@/components/ScrollToBottomButton';
 import { ThinkDrawer } from '@/components/ThinkDrawer';
@@ -21,6 +23,7 @@ import { SearchingIndicator } from '@/components/SearchingIndicator';
 import { Source } from '@/components/Source';
 import { Loading } from '@/components/Loading';
 import { Message, MessageContent, KeywordButton, ModelOption } from '@/components/types';
+import { MessageList } from '../components/MessageList';
 
 const MODEL_OPTIONS: ModelOption[] = [
   {
@@ -38,24 +41,39 @@ const MODEL_OPTIONS: ModelOption[] = [
 ];
 
 export default function Home() {
-  const [userInput, setUserInput] = useState('Hi');
+  // 状态管理
+  const [userInput, setUserInput] = useState('');
   const [useNetwork, setUseNetwork] = useState(false);
   const [showKeywords, setShowKeywords] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [answered, setAnswered] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const messageRef = useRef<HTMLDivElement>(null);
   const [isSiteEnv, setIsSiteEnv] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
-  const abortControllerRef = useRef<AbortController | null>(null);
   const [selectedModel, setSelectedModel] = useState('@tx/deepseek-ai/deepseek-v3-0324');
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // refs
+  const messageRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setIsSiteEnv(window.location.href.includes('.site'));
     setIsClient(true);
   }, []);
+  
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const scrollToBottom = () => {
     if (messageRef.current) {
@@ -143,44 +161,7 @@ export default function Home() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const onEdgeOneAIBtnClick = () => {
-    if (isSiteEnv) {
-      window.open(
-        'https://edgeone.cloud.tencent.com/pages/document/169925463311781888',
-        '_blank'
-      );
-      return;
-    }
-    window.open('http://edgeone.ai/document/169927753925951488', '_blank');
-  };
 
-  const onGithubBtnClick = () => {
-    if (isSiteEnv) {
-      window.open(
-        'https://github.com/TencentEdgeOne/pages-templates/blob/main/examples/deepseek-r1-edge/README_zh-CN.md',
-        '_blank'
-      );
-      return;
-    }
-    window.open(
-      'https://github.com/TencentEdgeOne/pages-templates/tree/main/examples/deepseek-r1-edge',
-      '_blank'
-    );
-  };
-
-  const onDeployBtnClick = () => {
-    if (isSiteEnv) {
-      window.open(
-        'https://console.cloud.tencent.com/edgeone/pages/new?from=github&template=deepseek-r1-edge',
-        '_blank'
-      );
-      return;
-    }
-    window.open(
-      'https://edgeone.ai/pages/templates/deepseek-r1-edge',
-      '_blank'
-    );
-  };
 
   const getDisplayButtons = () => {
     if (isMobile) {
@@ -189,10 +170,6 @@ export default function Home() {
     }
     return KEYWORD_BUTTONS;
   };
-
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -470,147 +447,74 @@ export default function Home() {
 
   return (
     isClient && (
-      <div className="flex flex-col h-screen bg-white">
-        {/* Header */}
-        <header className="sticky top-0 z-50 flex items-center px-6 py-3 bg-white">
-          <h1 className="text-base font-semibold text-gray-800">EdgeOne AI</h1>
-          <div className="flex-grow" />
-          <a onClick={onDeployBtnClick} className="mr-4 cursor-pointer">
-            <img
-              src="https://cdnstatic.tencentcs.com/edgeone/pages/deploy.svg"
-              alt="Deploy to EdgeOne Pages"
-              className="h-7"
-            />
-          </a>
-          <a
-            onClick={onGithubBtnClick}
-            target="_blank"
-            className="text-gray-600 transition-colors cursor-pointer hover:text-gray-900"
-          >
-            <svg height="24" width="24" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-            </svg>
-          </a>
-        </header>
-
-        <WelcomeMessage 
-          show={showKeywords} 
-          t={t} 
-          onEdgeOneAIBtnClick={onEdgeOneAIBtnClick} 
-        />
-
-        {/* Messages section */}
-        <div
-          ref={messageRef}
-          className="flex-1 px-4 py-4 overflow-y-auto md:px-6"
-        >
-          <div className="max-w-3xl mx-auto space-y-6">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex items-start ${
-                  message.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                <div
-                  className={`relative max-w-[100%] px-4 py-3 rounded-md ${
-                    message.role === 'user'
-                      ? 'bg-gray-200 text-black'
-                      : 'bg-white text-gray-800'
-                  }`}
-                >
-                  {message.role === 'user' && (
-                    <p className="whitespace-pre-wrap">{message.content}</p>
-                  )}
-
-                  {message.role === 'assistant' && (
-                    <div
-                      className="prose max-w-none prose-p:leading-relaxed prose-pre:bg-transparent prose-pre:border-0 
-                  prose-pre:p-0 prose-code:text-blue-600 prose-code:bg-transparent prose-code:px-1 prose-code:py-0.5
-                  prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-strong:text-gray-900
-                  prose-a:text-blue-600 prose-a:no-underline hover:prose-a:no-underline prose-headings:text-gray-900
-                  prose-ul:my-4 prose-li:my-0.5"
-                    >
-                      {message.source && <Source sources={message.source} t={t} />}
-                      {message.think && (
-                        <ThinkDrawer content={message.think} t={t} />
-                      )}
-                      {message.role === 'assistant' &&
-                        index === messages.length - 1 &&
-                        isSearching &&
-                        !message.content &&
-                        !message.think && <SearchingIndicator isSearching={isSearching} t={t} />}
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          code({ node, className, children, ...props }) {
-                            const match = /language-(\w+)/.exec(
-                              className || ''
-                            );
-                            const language = match ? match[1] : '';
-                            
-                            if (language === 'mermaid') {
-                              return <MermaidCodeBlock code={String(children).replace(/\n$/, '')} />;
-                            }
-                            
-                            if (match) {
-                              return (
-                                <SyntaxHighlighter
-                                  style={prism}
-                                  language={language}
-                                  PreTag="div"
-                                  customStyle={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    padding: '1rem',
-                                    margin: '0',
-                                    fontSize: '0.875rem',
-                                    borderRadius: '8px',
-                                    backgroundColor: '#f8f9fa'
-                                  }}
-                                >
-                                  {String(children).replace(/\n$/, '')}
-                                </SyntaxHighlighter>
-                              );
-                            }
-                            
-                            return (
-                              <code className="px-1 py-0.5 bg-gray-100 rounded text-blue-600" {...props}>
-                                {children}
-                              </code>
-                            );
-                          },
-                          a: ({ node, ...props }) => (
-                            <a
-                              {...props}
-                              target="_blank"
-                              className="text-blue-600 hover:text-blue-800 "
-                            />
-                          ),
-                        }}
-                      >
-                        {message.content}
-                      </ReactMarkdown>
-                    </div>
-                  )}
+      <div className="flex flex-col h-screen">
+        {/* 顶部栏 */}
+        <header className="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-100 dark:border-gray-800">
+          <div className="container flex items-center justify-between h-16 px-4 mx-auto">
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full blur-sm opacity-30"></div>
+                <div className="relative">
+                  <h1 className="text-xl font-bold text-gradient from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">智能对话助手</h1>
                 </div>
               </div>
-            ))}
+            </div>
+            
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label={isDarkMode ? "切换到亮色模式" : "切换到暗色模式"}
+            >
+              {isDarkMode ? (
+                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
           </div>
-        </div>
+        </header>
+
+        <main className="flex-1 overflow-hidden">
+          <div className="container h-full mx-auto px-4">
+            <WelcomeMessage show={showKeywords} t={t} />
+            
+            <div className="h-[calc(100vh-13rem)] md:h-[calc(100vh-14rem)] overflow-hidden">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="h-full glass rounded-2xl overflow-hidden"
+              >
+                <div 
+                  ref={messageRef} 
+                  className="h-full px-4 py-6 overflow-y-auto md:px-6 scrollbar-hidden"
+                >
+                  <MessageList messages={messages} isSearching={isSearching} t={t} />
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </main>
 
         {showKeywords && (
-          <div className="px-4 bg-white animate-fade-in">
-            <div className="max-w-3xl mx-auto mb-4">
-              <div className="grid grid-cols-1 gap-2 p-2 rounded-lg sm:grid-cols-2">
+          <div className="container mx-auto px-4 mt-4">
+            <div className="max-w-3xl mx-auto mb-6">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {getDisplayButtons().map((button) => (
-                  <button
+                  <motion.button
                     key={button.text}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
                     onClick={() => handleKeywordClick(button.query)}
-                    className="px-3 py-2 text-sm text-left text-gray-700 transition-colors duration-200 bg-white border border-gray-200 rounded-md hover:bg-gray-100 hover:text-gray-900"
+                    className="px-4 py-3 text-sm text-left text-gray-700 dark:text-gray-200 transition-all duration-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                   >
                     {button.text}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
@@ -618,7 +522,7 @@ export default function Home() {
         )}
 
         {/* Scroll to bottom button */}
-        <div className="px-4 bg-white">
+        <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto pb-2">
             <ScrollToBottomButton 
               isVisible={showScrollButton} 
@@ -628,16 +532,21 @@ export default function Home() {
         </div>
 
         {/* Input section */}
-        <div className="px-4 bg-white">
-          <form onSubmit={handleSubmit} className="max-w-3xl py-4 mx-auto">
-            <div className="flex flex-col overflow-hidden border border-gray-200 rounded-xl">
+        <div className="container mx-auto px-4 pb-6">
+          <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="glass rounded-2xl overflow-hidden shadow-lg"
+            >
               <textarea
                 ref={textareaRef}
                 value={userInput}
                 onChange={handleTextareaChange}
                 placeholder={t('Type a message...')}
                 disabled={isLoading}
-                className={`w-full bg-white text-gray-900 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none min-h-[52px] max-h-[200px] placeholder:text-gray-400 border-none ${
+                className={`w-full bg-transparent text-gray-800 dark:text-gray-100 px-5 py-4 focus:outline-none focus:ring-0 resize-none min-h-[60px] max-h-[200px] placeholder:text-gray-400 dark:placeholder:text-gray-500 border-none text-base ${
                   isLoading ? 'cursor-not-allowed opacity-50' : ''
                 }`}
                 onCompositionStart={(e) => {
@@ -655,13 +564,13 @@ export default function Home() {
                   }
                 }}
               />
-              <div className="flex items-center justify-between gap-3 px-4 py-2 bg-gray-50">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-gray-800/50">
+                <div className="flex flex-wrap items-center gap-3">
                   <div className="relative">
                     <select
                       value={selectedModel}
                       onChange={(e) => setSelectedModel(e.target.value)}
-                      className="pl-3 pr-8 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 min-w-[180px] appearance-none w-full cursor-pointer"
+                      className="pl-3 pr-8 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 min-w-[180px] appearance-none w-full cursor-pointer"
                       disabled={isLoading}
                     >
                       {MODEL_OPTIONS.map((model) => (
@@ -671,7 +580,7 @@ export default function Home() {
                       ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                      <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
                     </div>
@@ -679,10 +588,10 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setUseNetwork(!useNetwork)}
-                    className={`flex items-center px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                    className={`flex items-center px-3 py-2 rounded-lg text-sm transition-all ${
                       useNetwork
-                        ? 'bg-blue-50 text-blue-600 border border-blue-200'
-                        : 'bg-gray-100 text-gray-600 border border-gray-200'
+                        ? 'bg-gradient-to-r from-blue-500/10 to-indigo-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700'
                     }`}
                   >
                     <svg
@@ -702,18 +611,18 @@ export default function Home() {
                     (isLoading && !isStreaming) ||
                     (!userInput.trim() && !isStreaming)
                   }
-                  className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 ${
+                  className={`flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ${
                     (isLoading && !isStreaming) ||
                     (!userInput.trim() && !isStreaming)
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                       : isStreaming
-                      ? 'bg-red-500 text-white hover:bg-red-600 hover:shadow-md active:transform active:scale-95'
-                      : 'bg-blue-500 text-white hover:bg-blue-600 hover:shadow-md active:transform active:scale-95'
+                      ? 'bg-gradient-to-r from-red-500 to-pink-600 text-white shadow-lg hover:shadow-red-500/25 active:scale-95'
+                      : 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-blue-500/25 active:scale-95'
                   }`}
                 >
                   {isStreaming ? (
                     <svg
-                      className="w-4 h-4"
+                      className="w-5 h-5"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -725,7 +634,7 @@ export default function Home() {
                     </svg>
                   ) : (
                     <svg
-                      className="w-4 h-4"
+                      className="w-5 h-5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -740,7 +649,7 @@ export default function Home() {
                   )}
                 </button>
               </div>
-            </div>
+            </motion.div>
           </form>
         </div>
       </div>
