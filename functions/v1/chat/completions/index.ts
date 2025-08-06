@@ -27,34 +27,83 @@ const messageSchema = z
   .passthrough();
 
 /**
- * Search the web using SearXNG
+ * Extract search keywords from user query
+ */
+function extractSearchKeywords(query: string): string {
+  // Remove common question words and extract key terms
+  const stopWords = ['什么', '怎么', '如何', '为什么', '哪里', '谁', '什么时候', '多少', '请', '帮我', '告诉我', '解释', '说明'];
+  const words = query.split(/[\s，。！？；：、]+/).filter(word => 
+    word.length > 1 && !stopWords.includes(word)
+  );
+  
+  // Take the most relevant keywords (limit to 3-5 words)
+  return words.slice(0, 5).join(' ');
+}
+
+/**
+ * Search the web using SearXNG with improved query processing
  */
 async function searxngSearch(
   query: string,
   SEARXNG_URL = 'https://proxy.edgeone.app/search'
 ): Promise<SearchResult[]> {
   try {
+    // Extract and optimize search keywords
+    const searchKeywords = extractSearchKeywords(query);
+    
     const params = new URLSearchParams({
-      q: query,
+      q: searchKeywords,
       format: 'json',
-      engines: 'bing',
+      engines: 'bing,google',
+      categories: 'general',
+      language: 'zh-CN',
+      time_range: '',
+      safesearch: '1'
     });
 
     const headers = {
       'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
-      Origin: 'https://proxy.edgeone.app',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'application/json, text/plain, */*',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      'Referer': 'https://proxy.edgeone.app/',
+      'Origin': 'https://proxy.edgeone.app',
     };
 
-    const response = await fetch(`${SEARXNG_URL}?${params}`, { headers });
+    console.log(`Searching for: "${searchKeywords}" (original: "${query}")`);
+    
+    const response = await fetch(`${SEARXNG_URL}?${params}`, { 
+      headers,
+      method: 'GET'
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Search failed: ${errorText}`);
+      console.error(`Search API error: ${response.status} - ${errorText}`);
+      throw new Error(`Search failed: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    return data?.results || [];
+    const results = data?.results || [];
+    
+    // Filter and improve result quality
+    const filteredResults = results
+      .filter((result: any) => 
+        result.title && 
+        result.url && 
+        result.content &&
+        result.title.length > 5 &&
+        result.content.length > 20
+      )
+      .slice(0, 8) // Limit to top 8 results
+      .map((result: any) => ({
+        title: result.title.trim(),
+        url: result.url,
+        content: result.content.trim().substring(0, 300) + (result.content.length > 300 ? '...' : '')
+      }));
+    
+    console.log(`Found ${filteredResults.length} relevant results`);
+    return filteredResults;
   } catch (error) {
     console.error('SearXNG search error:', error);
     return [];
@@ -103,21 +152,33 @@ async function getContent(
 
     const context = formatSearchResults(searchResults);
     const contentWithNetworkSearch = `
-# The following content is search results based on the user's message:
+# 基于用户问题的搜索结果：
 ${context}
-In the search results I provided, each result is in the format of [webpage X begin]...[webpage X end], where X represents the numerical index of each article.
-When answering, please note the following points:
-- Today is ${new Date().toLocaleDateString('zh-CN')}.
-- Not all content in the search results is closely related to the user's question. You need to evaluate and filter the search results based on the question.
-- For listing-type questions (such as listing all flight information), try to limit your answer to no more than 10 points, and tell the user they can check the search sources for complete information. Prioritize providing complete and most relevant list items; unless necessary, don't proactively mention content not provided in search results.
-- For creative questions (such as writing essays), you need to interpret and summarize the user's requirements, choose an appropriate format, fully utilize the search results and extract important information to generate an answer that meets user requirements with intellectual depth, creativity and professionalism. Your creative content should be as lengthy as possible, providing multiple perspectives for each point based on your interpretation of user intent, ensuring information-rich and detailed explanations.
-- If the answer is lengthy, please structure it and summarize by paragraphs. If point-by-point answers are needed, try to limit it to 5 points and merge related content.
-- For objective Q&A, if the answer is very brief, you may add one or two sentences of related information to enrich the content.
-- You need to choose an appropriate and aesthetically pleasing format for your answer based on user requirements and answer content, ensuring strong readability.
-- Your answer should synthesize information from multiple relevant webpages, not repeatedly referencing a single webpage.
-- Unless requested by the user, your response language should match the language of the user's question.
-# User message:
+
+## 回答指导原则：
+
+**当前时间：** ${new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
+
+**搜索结果说明：** 每个搜索结果以 [webpage X begin]...[webpage X end] 格式呈现，其中 X 是文章的序号。
+
+**回答要求：**
+1. **相关性筛选**：仔细评估搜索结果与用户问题的相关性，优先使用最相关的信息
+2. **信息整合**：综合多个相关网页的信息，避免重复引用单一来源
+3. **回答结构**：
+   - 列表类问题：限制在8-10个要点，告知用户可查看参考资料获取完整信息
+   - 创作类问题：充分利用搜索结果，提供有深度、创意和专业性的内容
+   - 问答类问题：简洁准确回答，适当补充相关信息丰富内容
+4. **格式要求**：
+   - 使用清晰的段落结构和适当的标题
+   - 重要信息使用**粗体**标记
+   - 必要时使用项目符号或编号列表
+5. **语言风格**：与用户问题的语言保持一致，表达自然流畅
+6. **时效性**：注意信息的时效性，如有必要说明数据的时间范围
+
+**用户问题：**
 ${input}
+
+**请基于以上搜索结果和指导原则，提供准确、有用且结构清晰的回答。**
     `;
 
     return {

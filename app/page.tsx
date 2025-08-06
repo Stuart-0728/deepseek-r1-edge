@@ -424,16 +424,18 @@ export default function Home() {
 
   return (
     isClient && (
-      <div className="flex flex-col h-screen bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800">
+      <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         {/* 顶部导航栏 */}
-        <header className="sticky top-0 z-40 flex items-center justify-between h-14 px-4 border-b border-gray-200 dark:border-gray-700 backdrop-blur-md bg-white/80 dark:bg-gray-900/80">
+        <header className="sticky top-0 z-40 flex items-center justify-between h-16 px-6 border-b border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 shadow-sm">
           <div className="flex items-center">
-            <div className="flex items-center">
-              <h1 className="text-lg font-medium flex items-center">
-                <span className="mr-2 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent font-bold">智能对话助手</span>
-                <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
-                  <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.847a4.5 4.5 0 003.09 3.09L15.75 12l-2.847.813a4.5 4.5 0 00-3.09 3.09z" />
                 </svg>
+              </div>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                DeepSeek R1 智能助手
               </h1>
             </div>
           </div>
@@ -441,16 +443,16 @@ export default function Home() {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-3 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-200 group"
               aria-label={isDarkMode ? "切换到亮色模式" : "切换到暗色模式"}
             >
               {isDarkMode ? (
-                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                <svg className="w-5 h-5 text-yellow-500 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
                 </svg>
               ) : (
-                <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                <svg className="w-5 h-5 text-gray-700 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
                 </svg>
               )}
             </button>
@@ -474,7 +476,7 @@ export default function Home() {
           {/* 欢迎信息 */}
           {showKeywords && messages.length === 0 && (
             <div className="h-full flex flex-col items-center justify-center">
-              <WelcomeMessage show={true} t={t} />
+              <WelcomeMessage show={true} t={t} onExampleClick={handleKeywordClick} />
             </div>
           )}
           
@@ -498,17 +500,17 @@ export default function Home() {
         </main>
 
         {/* 输入区域 */}
-        <div className="py-3 px-4 bg-transparent">
-          <div className="max-w-3xl mx-auto">
+        <div className="sticky bottom-0 z-30 bg-gradient-to-t from-white/95 via-white/90 to-transparent dark:from-gray-900/95 dark:via-gray-900/90 dark:to-transparent pt-6 pb-6 backdrop-blur-sm">
+          <div className="max-w-4xl mx-auto px-6">
             <form onSubmit={handleSubmit} className="relative">
-              <div className="relative flex items-end bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-600 shadow-lg focus-within:ring-2 focus-within:ring-blue-500 dark:focus-within:ring-blue-400 focus-within:border-blue-500 dark:focus-within:border-blue-400">
+              <div className="relative flex items-end bg-white/80 dark:bg-gray-800/80 rounded-3xl border border-gray-200/50 dark:border-gray-700/50 shadow-xl backdrop-blur-md hover:shadow-2xl transition-all duration-300 focus-within:ring-2 focus-within:ring-blue-500/30 dark:focus-within:ring-blue-400/30 focus-within:border-blue-500/50 dark:focus-within:border-blue-400/50">
                 <textarea
                   ref={textareaRef}
                   value={userInput}
                   onChange={handleTextareaChange}
                   placeholder={t('Type a message...')}
                   disabled={isLoading}
-                  className="w-full bg-transparent text-gray-800 dark:text-gray-100 px-4 py-3 max-h-[200px] min-h-[56px] focus:outline-none resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                  className="w-full bg-transparent text-gray-800 dark:text-gray-100 px-5 py-4 max-h-[200px] min-h-[64px] focus:outline-none resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:placeholder-gray-400 dark:focus:placeholder-gray-500 transition-colors text-base leading-6"
                   onCompositionStart={(e) => {
                     (e.target as HTMLTextAreaElement).dataset.composing = 'true';
                   }}
@@ -532,13 +534,13 @@ export default function Home() {
                       (isLoading && !isStreaming) ||
                       (!userInput.trim() && !isStreaming)
                     }
-                    className={`p-2 rounded-lg transition-all ${
+                    className={`p-3 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 disabled:hover:scale-100 ${
                       (isLoading && !isStreaming) ||
                       (!userInput.trim() && !isStreaming)
-                        ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                        ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed bg-gray-100 dark:bg-gray-700'
                         : isStreaming
-                        ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
-                        : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-90'
+                        ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 bg-red-50 dark:bg-red-900/10'
+                        : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
                     }`}
                   >
                     {isStreaming ? (
@@ -548,6 +550,15 @@ export default function Home() {
                         viewBox="0 0 24 24"
                       >
                         <path d="M6 6h12v12H6z" />
+                      </svg>
+                    ) : isLoading ? (
+                      <svg
+                        className="w-5 h-5 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                     ) : (
                       <svg
@@ -562,15 +573,15 @@ export default function Home() {
                 </div>
               </div>
               
-              <div className="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400 px-1">
+              <div className="flex items-center justify-between mt-4 text-xs text-gray-500 dark:text-gray-400 px-2">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center">
-                    <div className="flex items-center space-x-2 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
-                      <span className="font-medium">模型:</span>
+                    <div className="flex items-center space-x-3 bg-white/80 dark:bg-gray-800/80 px-4 py-2 rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-sm">
+                      <span className="font-semibold text-gray-700 dark:text-gray-300">模型:</span>
                       <select
                         value={selectedModel}
                         onChange={(e) => setSelectedModel(e.target.value)}
-                        className="bg-transparent border-none focus:outline-none appearance-none cursor-pointer pr-6 relative"
+                        className="bg-transparent border-none focus:outline-none appearance-none cursor-pointer pr-6 relative font-medium text-gray-800 dark:text-gray-200"
                         disabled={isLoading}
                       >
                         {MODEL_OPTIONS.map((model) => (
@@ -579,7 +590,7 @@ export default function Home() {
                           </option>
                         ))}
                       </select>
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
                     </div>
@@ -588,20 +599,20 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setUseNetwork(!useNetwork)}
-                    className={`flex items-center px-3 py-1.5 rounded-full border transition-colors ${
+                    className={`flex items-center px-4 py-2 rounded-xl border transition-all duration-200 shadow-sm hover:shadow-md ${
                       useNetwork 
-                        ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
-                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+                        ? 'border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-600 dark:text-blue-400' 
+                        : 'border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-gray-50 dark:hover:bg-gray-700/50'
                     }`}
                   >
                     <svg
-                      className={`w-4 h-4 mr-1.5 ${useNetwork ? 'text-blue-500' : ''}`}
+                      className={`w-4 h-4 mr-2 transition-colors ${useNetwork ? 'text-blue-500' : 'text-gray-500 dark:text-gray-400'}`}
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
                     </svg>
-                    {useNetwork ? '联网模式' : '离线模式'}
+                    <span className="font-medium">{useNetwork ? '联网模式' : '离线模式'}</span>
                   </button>
                 </div>
                 <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
