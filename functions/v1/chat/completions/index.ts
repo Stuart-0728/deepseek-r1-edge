@@ -41,7 +41,61 @@ function extractSearchKeywords(query: string): string {
 }
 
 /**
- * Search the web using SearXNG with improved query processing
+ * Fetch and extract content from a webpage
+ */
+async function fetchWebpageContent(url: string): Promise<string> {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      },
+      signal: AbortSignal.timeout(8000) // 8 second timeout
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const html = await response.text();
+    
+    // Simple HTML content extraction
+    // Remove script and style tags
+    let content = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+    content = content.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+    
+    // Extract text from common content tags
+    const contentMatches = content.match(/<(?:p|div|article|section|main|h[1-6])[^>]*>([\s\S]*?)<\/(?:p|div|article|section|main|h[1-6])>/gi);
+    
+    if (contentMatches) {
+      let extractedText = contentMatches
+        .map(match => match.replace(/<[^>]*>/g, '')) // Remove HTML tags
+        .join(' ')
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim();
+      
+      // Limit content length
+      if (extractedText.length > 1500) {
+        extractedText = extractedText.substring(0, 1500) + '...';
+      }
+      
+      return extractedText;
+    }
+    
+    // Fallback: extract all text content
+    const textContent = content.replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .substring(0, 800);
+    
+    return textContent || '无法提取网页内容';
+  } catch (error) {
+    console.log(`Failed to fetch content from ${url}:`, error);
+    return '无法获取网页内容';
+  }
+}
+
+/**
+ * Search the web using multiple engines and fetch actual content
  */
 async function searxngSearch(
   query: string
@@ -179,17 +233,45 @@ async function searxngSearch(
       index === self.findIndex(r => r.url === result.url)
     );
     
+    // Fetch actual webpage content for top results
+    const resultsWithContent = await Promise.all(
+      uniqueResults.slice(0, 5).map(async (result) => {
+        // Skip if it's a Wikipedia result (already has good content)
+        if (result.url.includes('wikipedia.org')) {
+          return result;
+        }
+        
+        // Skip if it's a search engine result page
+        if (result.url.includes('baidu.com/s') || result.url.includes('google.com/search')) {
+          return result;
+        }
+        
+        console.log(`Fetching content from: ${result.url}`);
+        const webContent = await fetchWebpageContent(result.url);
+        
+        // If we got substantial content, replace the snippet
+        if (webContent && webContent.length > 100 && !webContent.includes('无法')) {
+          return {
+            ...result,
+            content: webContent
+          };
+        }
+        
+        return result;
+      })
+    );
+    
     // If still no results, provide fallback
-    if (uniqueResults.length === 0) {
-      uniqueResults.push({
+    if (resultsWithContent.length === 0) {
+      resultsWithContent.push({
         title: `关于"${searchKeywords}"的搜索`,
         url: `https://www.baidu.com/s?wd=${encodeURIComponent(searchKeywords)}`,
         content: `未找到相关结果，建议您访问百度搜索获取更多信息。`
       });
     }
     
-    console.log(`Found ${uniqueResults.length} unique results for "${searchKeywords}"`);
-    return uniqueResults;
+    console.log(`Found ${resultsWithContent.length} results with content for "${searchKeywords}"`);
+    return resultsWithContent;
   } catch (error) {
     console.error('SearXNG search error:', error);
     return [];
