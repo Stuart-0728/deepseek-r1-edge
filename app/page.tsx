@@ -503,7 +503,7 @@ export default function Home() {
         <div className="sticky bottom-0 z-30 bg-gradient-to-t from-white/95 via-white/90 to-transparent dark:from-gray-900/95 dark:via-gray-900/90 dark:to-transparent pt-6 pb-6 backdrop-blur-sm">
           <div className="max-w-4xl mx-auto px-6">
             <form onSubmit={handleSubmit} className="relative">
-              <div className="relative flex items-end bg-white/80 dark:bg-gray-800/80 rounded-3xl border border-gray-200/50 dark:border-gray-700/50 shadow-xl backdrop-blur-md hover:shadow-2xl transition-all duration-300 focus-within:ring-2 focus-within:ring-blue-500/30 dark:focus-within:ring-blue-400/30 focus-within:border-blue-500/50 dark:focus-within:border-blue-400/50">
+              <div className="relative flex items-center bg-white/80 dark:bg-gray-800/80 rounded-3xl border border-gray-200/50 dark:border-gray-700/50 shadow-xl backdrop-blur-md hover:shadow-2xl transition-all duration-300 focus-within:ring-2 focus-within:ring-blue-500/30 dark:focus-within:ring-blue-400/30 focus-within:border-blue-500/50 dark:focus-within:border-blue-400/50">
                 <textarea
                   ref={textareaRef}
                   value={userInput}
@@ -526,7 +526,7 @@ export default function Home() {
                     }
                   }}
                 />
-                <div className="flex items-center pr-3">
+                <div className="flex items-center justify-center pr-3 self-center">
                   <button
                     type={isStreaming ? 'button' : 'submit'}
                     onClick={isStreaming ? handleStopResponse : undefined}
@@ -615,8 +615,8 @@ export default function Home() {
                     <span className="font-medium">{useNetwork ? '联网模式' : '离线模式'}</span>
                   </button>
                 </div>
-                <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
-                  Shift + Enter 换行
+                <div className="bg-white/80 dark:bg-gray-800/80 px-4 py-2 rounded-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm shadow-sm">
+                  <span className="font-medium text-gray-600 dark:text-gray-400">Shift + Enter 换行</span>
                 </div>
               </div>
             </form>

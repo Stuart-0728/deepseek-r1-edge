@@ -44,47 +44,118 @@ function extractSearchKeywords(query: string): string {
  * Search the web using SearXNG with improved query processing
  */
 async function searxngSearch(
-  query: string,
-  SEARXNG_URL = 'https://proxy.edgeone.app/search'
+  query: string
 ): Promise<SearchResult[]> {
   try {
     // Extract and optimize search keywords
     const searchKeywords = extractSearchKeywords(query);
     
-    const params = new URLSearchParams({
-      q: searchKeywords,
-      format: 'json',
-      engines: 'bing,google',
-      categories: 'general',
-      language: 'zh-CN',
-      time_range: '',
-      safesearch: '1'
-    });
-
-    const headers = {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'Accept': 'application/json, text/plain, */*',
-      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-      'Referer': 'https://proxy.edgeone.app/',
-      'Origin': 'https://proxy.edgeone.app',
-    };
-
     console.log(`Searching for: "${searchKeywords}" (original: "${query}")`);
     
-    const response = await fetch(`${SEARXNG_URL}?${params}`, { 
-      headers,
-      method: 'GET'
-    });
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'DNT': '1',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1'
+    };
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Search API error: ${response.status} - ${errorText}`);
-      throw new Error(`Search failed: ${response.status} ${response.statusText}`);
+    let results: SearchResult[] = [];
+    
+    // Try multiple search engines for comprehensive results
+    const searchEngines = [
+      {
+        name: 'SearXNG',
+        url: `https://searx.be/search?q=${encodeURIComponent(searchKeywords)}&format=json&categories=general&engines=bing,google,duckduckgo&language=zh-CN`,
+        parser: (data: any) => {
+          if (data.results && Array.isArray(data.results)) {
+            return data.results.map((result: any) => ({
+              title: result.title || '',
+              url: result.url || '',
+              content: result.content || result.snippet || ''
+            }));
+          }
+          return [];
+        }
+      },
+      {
+        name: 'DuckDuckGo',
+        url: `https://api.duckduckgo.com/?q=${encodeURIComponent(searchKeywords)}&format=json&no_html=1&skip_disambig=1`,
+        parser: (data: any) => {
+          const results = [];
+          if (data.Abstract && data.Abstract.length > 20) {
+            results.push({
+              title: data.Heading || searchKeywords,
+              url: data.AbstractURL || `https://duckduckgo.com/?q=${encodeURIComponent(searchKeywords)}`,
+              content: data.Abstract
+            });
+          }
+          if (data.RelatedTopics && Array.isArray(data.RelatedTopics)) {
+            data.RelatedTopics.slice(0, 3).forEach((topic: any) => {
+              if (topic.FirstURL && topic.Text) {
+                results.push({
+                  title: topic.Text.split(' - ')[0] || topic.Text.substring(0, 100),
+                  url: topic.FirstURL,
+                  content: topic.Text
+                });
+              }
+            });
+          }
+          return results;
+        }
+      },
+      {
+        name: 'Wikipedia',
+        url: `https://zh.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(searchKeywords)}&limit=3&namespace=0&format=json&origin=*`,
+        parser: (data: any) => {
+          if (Array.isArray(data) && data.length >= 4) {
+            const [, titles, descriptions, urls] = data;
+            const results = [];
+            for (let i = 0; i < Math.min(titles.length, 3); i++) {
+              if (titles[i] && urls[i]) {
+                results.push({
+                  title: titles[i],
+                  url: urls[i],
+                  content: descriptions[i] || `关于${titles[i]}的维基百科条目`
+                });
+              }
+            }
+            return results;
+          }
+          return [];
+        }
+      }
+    ];
+    
+    // Try each search engine
+    for (const engine of searchEngines) {
+      try {
+        console.log(`Trying ${engine.name} search...`);
+        const response = await fetch(engine.url, { 
+          headers,
+          method: 'GET',
+          signal: AbortSignal.timeout(10000) // 10 second timeout
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const engineResults = engine.parser(data);
+          
+          if (engineResults.length > 0) {
+            results.push(...engineResults);
+            console.log(`${engine.name} returned ${engineResults.length} results`);
+            
+            // If we have enough results, break
+            if (results.length >= 8) break;
+          }
+        }
+      } catch (error) {
+        console.log(`${engine.name} search failed:`, error);
+        continue;
+      }
     }
-
-    const data = await response.json();
-    const results = data?.results || [];
     
     // Filter and improve result quality
     const filteredResults = results
@@ -92,18 +163,33 @@ async function searxngSearch(
         result.title && 
         result.url && 
         result.content &&
-        result.title.length > 5 &&
-        result.content.length > 20
+        result.title.length > 3 &&
+        result.content.length > 15 &&
+        result.url.startsWith('http')
       )
-      .slice(0, 8) // Limit to top 8 results
+      .slice(0, 10) // Limit to top 10 results
       .map((result: any) => ({
-        title: result.title.trim(),
+        title: result.title.trim().substring(0, 200),
         url: result.url,
-        content: result.content.trim().substring(0, 300) + (result.content.length > 300 ? '...' : '')
+        content: result.content.trim().substring(0, 400) + (result.content.length > 400 ? '...' : '')
       }));
     
-    console.log(`Found ${filteredResults.length} relevant results`);
-    return filteredResults;
+    // Remove duplicates based on URL
+    const uniqueResults = filteredResults.filter((result, index, self) => 
+      index === self.findIndex(r => r.url === result.url)
+    );
+    
+    // If still no results, provide fallback
+    if (uniqueResults.length === 0) {
+      uniqueResults.push({
+        title: `关于"${searchKeywords}"的搜索`,
+        url: `https://www.baidu.com/s?wd=${encodeURIComponent(searchKeywords)}`,
+        content: `未找到相关结果，建议您访问百度搜索获取更多信息。`
+      });
+    }
+    
+    console.log(`Found ${uniqueResults.length} unique results for "${searchKeywords}"`);
+    return uniqueResults;
   } catch (error) {
     console.error('SearXNG search error:', error);
     return [];
