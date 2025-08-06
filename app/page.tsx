@@ -333,8 +333,8 @@ export default function Home() {
     try {
       const url =
         process.env.NODE_ENV === 'development'
-          ? process.env.NEXT_PUBLIC_BASE_URL!
-          : '/v1/chat/completions';
+          ? '/api/v1/chat/completions'
+          : '/functions/v1/chat/completions';
 
       // Create a new AbortController for this request
       abortControllerRef.current = new AbortController();

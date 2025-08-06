@@ -399,25 +399,49 @@ export async function POST(request: NextRequest) {
       content,
     };
 
-    // For local development, we'll return the search results and processed content
-    // In production, this would call the AI model
-    const response = {
-      choices: [{
-        delta: {
-          content: `基于搜索结果，我找到了以下信息：\n\n${formatSearchResults(searchResults)}\n\n这些是从网络搜索获得的实际内容，包含了网页的具体文本信息，而不仅仅是链接。`
-        }
-      }]
-    };
+    // Create a streaming response that mimics the AI model response
+    const responseContent = `基于搜索结果，我找到了以下信息：\n\n${formatSearchResults(searchResults)}\n\n这些是从网络搜索获得的实际内容，包含了网页的具体文本信息，而不仅仅是链接。搜索引擎返回了 ${searchResults.length} 个结果，每个结果都包含了实际的网页内容。`;
+    
+    // Create a readable stream for Server-Sent Events
+    const stream = new ReadableStream({
+      start(controller) {
+        // Send the content as chunks to simulate streaming
+        const chunks = responseContent.split(' ');
+        let index = 0;
+        
+        const sendChunk = () => {
+          if (index < chunks.length) {
+            const chunk = {
+              choices: [{
+                delta: {
+                  content: chunks[index] + (index < chunks.length - 1 ? ' ' : '')
+                }
+              }]
+            };
+            controller.enqueue(`data: ${JSON.stringify(chunk)}\n\n`);
+            index++;
+            setTimeout(sendChunk, 50); // Delay between chunks
+          } else {
+            controller.enqueue(`data: [DONE]\n\n`);
+            controller.close();
+          }
+        };
+        
+        sendChunk();
+      }
+    });
 
     const headers = new Headers({
-      'Content-Type': 'application/json',
+      'Content-Type': 'text/event-stream; charset=utf-8',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'results': formatResultsForHeader(searchResults),
     });
 
-    return new Response(JSON.stringify(response), { headers });
+    return new Response(stream, { headers });
   } catch (error: any) {
     console.error('API Error:', error);
     return NextResponse.json({
